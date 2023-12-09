@@ -1,0 +1,25 @@
+app:
+  name: lemon
+  id: lemon
+  version: v1.0
+  env: test
+server:
+  http:
+    addr: 0.0.0.0:8000
+    timeout: 10s
+  grpc:
+    addr: 0.0.0.0:9000
+    timeout: 10s
+data:
+  database:
+    driver: postgres
+    source: host=127.0.0.1 port=5432 user=auc dbname=auc password=aucpwd sslmode=disable
+    debug: true
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+trace:
+  endpoint: http://jaeger-agent-test.luck.net/api/traces
+sentry:
+  dsn: ""

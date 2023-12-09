@@ -1,0 +1,5 @@
+.DS_Store
+.vscode
+.nocalhost/.env_lock
+.scannerwork/
+build/

@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package api.user.v1;
+
+option go_package = "subway_intro/api/user/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.user.v1";
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+service UserService {
+  rpc Create (CreateUserRequest) returns (CreateUserReply) {
+    option (google.api.http) = {
+      post: "/v1/user"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "创建用户";
+    };
+  }
+  rpc Update (UpdateUserRequest) returns (UpdateUserReply) {
+    option (google.api.http) = {
+      put: "/v1/user/{id}"
+      body: "*"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "更新用户信息";
+    };
+  }
+  rpc Delete (DeleteUserRequest) returns (DeleteUserReply) {
+    option (google.api.http) = {
+      delete: "/v1/user/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "删除单个用户";
+    };
+  }
+  rpc Get (GetUserRequest) returns (GetUserReply) {
+    option (google.api.http) = {
+      get: "/v1/user/{id}"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "获取单个用户信息";
+    };
+  }
+  rpc List (ListUserRequest) returns (ListUserReply) {
+    option (google.api.http) = {
+      get: "/v1/user"
+    };
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "获取用户列表";
+    };
+  }
+}
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  uint32 age = 3;
+}
+
+message CreateUserRequest {
+  string name = 1 [(validate.rules).string = {min_len: 2, max_len: 10}]; // 用户名字长必须处于2~10
+  uint32 age = 2;
+}
+
+message CreateUserReply {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  int64 id = 1 [(validate.rules).int64 = {gt: 0}];
+  string name = 2 [(validate.rules).string = {min_len: 2, max_len: 10}]; // 用户名字长必须处于2~10
+  uint32 age = 3;
+}
+
+message UpdateUserReply {
+  User user = 1;
+}
+
+message DeleteUserRequest {
+  int64 id = 1;
+}
+message DeleteUserReply {
+}
+
+message GetUserRequest {
+  int64 id = 1;
+}
+
+message GetUserReply {
+  User user = 1;
+}
+
+message ListUserRequest {
+}
+
+message ListUserReply {
+  repeated User userList = 1;
+}
+

@@ -1,0 +1,39 @@
+stages:
+  - build
+  - sonarqube-check
+
+build_job:
+  stage: build
+  image:
+    name: 139.198.4.111:30002/base/docker-golang:v1.18.5-03
+  variables:
+    ProjectBasePath: ${GOPATH}/git.haodf.net/${CI_PROJECT_NAMESPACE}
+  before_script:
+    - mkdir -p ${ProjectBasePath}
+    - docker info
+    - ln -sv ${CI_PROJECT_DIR} ${ProjectBasePath}/${CI_PROJECT_NAME}
+    - env
+  script:
+    - docker login -u ${HARBOR_USER} -p ${HARBOR_PASSWORD} ${HARBOR_URL}
+    - make VERSION=${CI_COMMIT_TAG}
+  only:
+    - tags
+
+sonarqube-check:
+  stage: sonarqube-check
+  image:
+    name: 139.198.4.111:30002/docker.io/sonarsource/sonar-scanner-cli:latest
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
+    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
+  before_script:
+    - env
+  script:
+    - sonar-scanner
+  allow_failure: true
+  only:
+    - tags
+    - /^release-.*/
+    - merge_requests
+

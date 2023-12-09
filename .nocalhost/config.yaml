@@ -1,0 +1,40 @@
+configProperties:
+  version: v2
+  envFile: .env_lock
+
+application:
+  name: app
+  manifestType: rawManifestLocal
+  resourcePath:
+    - ""
+  services:
+  - name: ${NAME}
+    serviceType: deployment
+    containers:
+      - name: ${NAME}
+        dev:
+          sidecarImage: ${SIDECAR_IMAGE}
+          gitUrl: ""
+          image: ${IMAGE}
+          workDir: /go/src/${DEPLOYER}/${NAME}
+          storageClass: "local-workspace"
+          resources:
+            limits:
+              memory: 2Gi
+              cpu: "2"
+            requests:
+              memory: 200Mi
+              cpu: "1"
+          persistentVolumeDirs: 
+            - path: "/go/src"
+              capacity: 10Gi
+          command: null
+          debug: null
+          hotReload: false
+          sync: null
+          env: 
+            - name: DEPLOYER
+              value: ${DEPLOYER:anyone}
+          
+          portForward: []
+ 
